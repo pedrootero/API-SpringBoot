@@ -27,7 +27,7 @@ public class MedicoController {
     }
     @GetMapping
     public Page<DadosListagemMedico> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
-        return repository.findAll(paginacao).map(DadosListagemMedico::new);
+        return repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
         //return repository.findAll(paginacao).stream().map(DadosListagemMedico::new).toList(); //duvida
     }
 
@@ -37,5 +37,13 @@ public class MedicoController {
         var medico = repository.getReferenceById(dados.id());
         medico.atualizarInformacoes(dados);
 
+    }
+    @DeleteMapping("/{id}") //parametro entre chaves quer dizer q é um parametro dinamico que pega o valor da url da rota
+    @Transactional
+    public void excluir(@PathVariable Long id){ //@PathVariable pega o parametro que vem da url
+        //repository.deleteById(id); // exclui o cadastro do banco
+
+        var medico = repository.getReferenceById(id); //apenas inativa o cadastro
+        medico.excluir();
     }
 }
